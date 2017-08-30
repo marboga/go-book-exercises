@@ -8,11 +8,12 @@ import (
 	"sync"
 )
 
-var counter int
+var count int
 var mu sync.Mutex
 
 func main() {
 	http.HandleFunc("/", handler) // each request calls handler
+	http.HandleFunc("/count", counter)
 	log.Fatal(http.ListenAndServe("localhost:8000", nil))
 }
 
@@ -20,12 +21,12 @@ func main() {
 func handler(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintf(w, "URL.Path = %q\n", r.URL.Path)
 	mu.Lock()
-	counter++
+	count++
 	mu.Unlock()
 }
 
-func count(w http.ResponseWriter, r *http.Request) {
+func counter(w http.ResponseWriter, r *http.Request) {
 	mu.Lock()
-	fmt.Fprintf(w, "This server has been accessed %v times", counter)
+	fmt.Fprintf(w, "This server has been accessed %v times", count)
 	mu.Unlock()
 }
